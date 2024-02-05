@@ -1,5 +1,6 @@
 import torch
 from PIL import Image
+import cv2
 import numpy as np
 from torchvision import transforms
 import lib.models as models
@@ -7,35 +8,29 @@ from lib.utils import utils
 import matplotlib.pyplot as plt
 from lib.config import config, update_config
 
-# Step 1: Load the HRNet model
-model = models.get_face_alignment_net(config)
-# Load the pre-trained weights (you need to download the weights)
-checkpoint = torch.load('HR18-WFLW.pth', map_location=torch.device('cpu'))
-model.eval()
+import os
+data = torch.load("./output/WFLW/face_alignment_wflw_hrnet_w18/predictions.pth")
+print(data.size())
+# print(data[0])
+# print(sum([len(os.listdir(f"./data/wflw/images/{i}")) for i in os.listdir("./data/wflw/images")]))
 
-# Step 2: Prepare input images
-# Example: Load a sample image
-image_path = "C:/Users/Asus/Desktop/wife.jpg"
-input_image = Image.open(image_path)
 
-# Step 3: Preprocess the input image
-transform = transforms.Compose([
-    transforms.Resize((256 , 256)),
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),
-])
-input_tensor = transform(input_image).unsqueeze(0)
+img = cv2.imread("C:/Users/Asus/Desktop/PartA_01803.jpg")
+new_img = img.copy()
+for idx in range(8, 9):
+    for i in data[idx]:
+        # print(i)
+        cv2.circle(new_img, i.long().numpy(), 5, (255, 255, 255), 3) 
 
-# Step 4: Perform inference
-with torch.no_grad():
-    output = model(input_tensor)
+plt.figure(figsize=(12, 8))
+plt.subplot(1, 3, 1)
+plt.title("input")
+plt.imshow(img)
 
-# Step 5: Postprocess the output to obtain facial landmarks
-landmarks = utils.get_preds(output)[-1].squeeze().cpu().numpy()
+# plt.subplot(1, 3, 2)
+# plt.scatter(data[0, :, 0], data[0, :, 1], s=10, marker='.', c='r')
+plt.subplot(1, 3, 3)
+plt.title("output")
+plt.imshow(new_img)
 
-# Step 6: Visualize the results
-plt.figure(figsize=(8, 8))
-plt.imshow(input_image)
-plt.scatter(landmarks[:, 0], landmarks[:, 1], s=10, marker='.', c='r')
-plt.axis('off')
 plt.show()
