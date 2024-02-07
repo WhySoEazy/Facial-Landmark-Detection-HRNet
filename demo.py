@@ -41,9 +41,8 @@ def main():
     std = np.array([0.229, 0.224, 0.225], dtype=np.float32)
 
     # Read the input image
-    image = cv2.imread('test.jpg')
-
-    image = cv2.resize(image, [256, 256])
+    image = cv2.imread('qa1.jpg')
+    
     input = np.copy(image).astype(np.float32)
     input = (input / 255.0 - mean) / std
     input = torch.from_numpy(input).permute(2, 0, 1).unsqueeze(0)
@@ -59,7 +58,6 @@ def main():
     cv2.imshow('Input', image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-
 
 if __name__ == '__main__':
     main()
