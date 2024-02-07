@@ -41,7 +41,7 @@ def main():
     std = np.array([0.229, 0.224, 0.225], dtype=np.float32)
 
     # Read the input image
-    image = cv2.imread('qa4.jpg')
+    image = cv2.imread('Album/V9.jpg')
     
     input = np.copy(image).astype(np.float32)
     input = (input / 255.0 - mean) / std
